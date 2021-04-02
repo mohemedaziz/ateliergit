@@ -1,36 +1,52 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include "lot2.h"
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
+#include <stdlib.h> 
+#include <SDL/SDL.h> 
+#include <SDL/SDL_image.h> 
+#include <SDL/SDL_ttf.h>
+#include <SDL/SDL_mixer.h>
+#include "mm.h"
 
-int main(int argc, char** argv){
-Ennemi * p;
-int direction;
+int main()
+{  personnage joueur;
+   Imm ecran,bg,mm,curseur;
+   SDL_Event event;
+FILE *f=NULL;
+save_perso save_p;
+   SDL_Init(SDL_INIT_EVERYTHING);
+	int done=0;
+	int test=0;
+   	int i;
+     timer t;
+    t.start=0;
+    t.end=0;
+    t.diff=0;
+   init(&joueur,&ecran,&bg,&curseur,&mm); 
+   ecran.srf = SDL_SetVideoMode(640, 480, 32, SDL_DOUBLEBUF); 
+   load(&joueur,&bg,&curseur,&mm);
+   SDL_EnableKeyRepeat(100, 100);
+  SDL_WM_SetCaption( "..perso animation..", NULL );
+  while(!done)
+{ 
+ mini_map(&curseur,&joueur);
+ save__perso(&joueur,f,&save_p);
+   t.start=SDL_GetTicks();
+   display(&joueur,&ecran,&bg,&test,&curseur,&mm);
+   done= check_input(event,&test,done,&ecran,&joueur);
+   t.end=SDL_GetTicks(); 
+ t.diff+=t.end-t.start;
+if(t.diff>=100 && (test==1 || test==2))
+{
+  t.diff=0;
+  joueur.current_frame++;
+}
+}
+for(i=1;i<14;i++){
+SDL_FreeSurface(joueur.surface[i]);
+} 
+SDL_FreeSurface(joueur.surface[0]);
+SDL_FreeSurface(bg.srf); 
+SDL_Quit();
 
-if( SDL_Init( SDL_INIT_VIDEO ) == -1 )
-    	{
-        printf( "Can't init SDL:  %s\n", SDL_GetError( ) );
-        return EXIT_FAILURE;
-    	}
-SDL_Surface *screen,*background;
-SDL_Rect posscreen,posbackground;
-background=IMG_Load("background.jpg");
-posscreen.x=0;
-posscreen.y=0;
-posbackground.x=0;
-posbackground.y=0;
-screen = SDL_SetVideoMode( 1920, 1080, 32, SDL_HWSURFACE | SDL_RESIZABLE);
 
-int quit=0;
-while(quit==0){
-SDL_BlitSurface(background,NULL,screen,&posbackground);
-init (p );
-afficherEnnemi(p, screen);
-deplacer(p);
-
-
-SDL_Flip(screen);
-}//boucle while(quit)
-}// int main
-
+return 0;
+}
