@@ -29,7 +29,7 @@ ecran->srf=NULL;
 
 void load(personnage* joueur, Imm* bg,Imm* curseur,Imm* mini_map)
 {
- bg->srf=IMG_Load("Unmasked lvl1.png");
+ bg->srf=IMG_Load("mm1.png");
  joueur->surface[0]=IMG_Load("mm1.png");
  mini_map->srf=IMG_Load("MM.png");
  curseur->srf=IMG_Load("curseur.png");
